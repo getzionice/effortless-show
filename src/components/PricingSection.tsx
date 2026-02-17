@@ -35,7 +35,7 @@ const plans = [
 
 const PricingSection = () => {
   return (
-    <section id="pricing" className="relative py-24">
+    <section id="pricing" className="relative py-24 bg-card">
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -43,11 +43,11 @@ const PricingSection = () => {
           viewport={{ once: true }}
           className="mx-auto mb-16 max-w-2xl text-center"
         >
-          <h2 className="mb-4 font-display text-4xl font-bold">
-            Simple, Transparent{" "}
-            <span className="gradient-text">Pricing</span>
+          <h2 className="mb-4 font-display text-4xl font-semibold tracking-tight">
+            Simple, transparent{" "}
+            <span className="gradient-text">pricing</span>
           </h2>
-          <p className="text-lg text-muted-foreground">
+          <p className="text-base text-muted-foreground">
             Start free. Upgrade when you're ready to go pro.
           </p>
         </motion.div>
@@ -62,8 +62,8 @@ const PricingSection = () => {
               transition={{ delay: i * 0.1 }}
               className={`rounded-2xl p-8 flex flex-col ${
                 plan.featured
-                  ? "glass-card glow-border relative"
-                  : "glass-card"
+                  ? "bg-background border-2 border-primary/30 shadow-xl shadow-primary/10 relative"
+                  : "bg-background border border-border"
               }`}
             >
               {plan.featured && (
@@ -88,7 +88,7 @@ const PricingSection = () => {
               <Link to="/create">
                 <Button
                   variant={plan.featured ? "hero" : "outline"}
-                  className="w-full"
+                  className="w-full rounded-full"
                 >
                   {plan.cta}
                 </Button>

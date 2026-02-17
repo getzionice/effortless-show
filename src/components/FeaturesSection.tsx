@@ -36,7 +36,7 @@ const features = [
 
 const FeaturesSection = () => {
   return (
-    <section id="features" className="relative py-24">
+    <section id="features" className="relative py-24 bg-card">
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -44,11 +44,11 @@ const FeaturesSection = () => {
           viewport={{ once: true }}
           className="mx-auto mb-16 max-w-2xl text-center"
         >
-          <h2 className="mb-4 font-display text-4xl font-bold">
-            Everything You Need to{" "}
-            <span className="gradient-text">Launch a Podcast</span>
+          <h2 className="mb-4 font-display text-4xl font-semibold tracking-tight">
+            Everything you need to{" "}
+            <span className="gradient-text">launch a podcast</span>
           </h2>
-          <p className="text-lg text-muted-foreground">
+          <p className="text-base text-muted-foreground">
             Professional tools powered by AI, designed for creators who want results—not complexity.
           </p>
         </motion.div>
@@ -61,9 +61,9 @@ const FeaturesSection = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.1 }}
-              className="glass-card p-6 group hover:glow-border transition-all duration-500"
+              className="group rounded-2xl border border-border bg-background p-6 hover:shadow-lg hover:border-primary/20 transition-all duration-500"
             >
-              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
+              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10">
                 <feature.icon className="h-6 w-6 text-primary" />
               </div>
               <h3 className="mb-2 font-display text-lg font-semibold">{feature.title}</h3>
