@@ -25,6 +25,11 @@ export function useTTS() {
     stop();
     setLoadingVoiceId(voiceId);
 
+    // Create and unlock Audio element immediately in user gesture context
+    const audio = new Audio();
+    audio.play().catch(() => {});
+    audio.preload = "auto";
+
     try {
       const response = await fetch(
         `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/elevenlabs-tts`,
@@ -45,7 +50,7 @@ export function useTTS() {
 
       const audioBlob = await response.blob();
       const audioUrl = URL.createObjectURL(audioBlob);
-      const audio = new Audio(audioUrl);
+      audio.src = audioUrl;
 
       audio.onended = () => {
         setPlayingVoiceId(null);
