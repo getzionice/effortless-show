@@ -19,7 +19,8 @@ const HeroSection = () => {
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.7 }}>
+            transition={{ duration: 0.7 }}
+            className="text-center lg:text-left flex flex-col items-center lg:items-start">
 
             <p className="mb-3 text-sm font-medium tracking-wide text-muted-foreground">
               AI-Powered Podcast Studio
