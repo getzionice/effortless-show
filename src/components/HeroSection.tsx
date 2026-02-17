@@ -5,10 +5,10 @@ import { motion } from "framer-motion";
 import heroPerson from "@/assets/hero-person.png";
 
 const podcastCards = [
-  { title: "Morning Insights", host: "AI Generated", color: "bg-primary/10" },
-  { title: "Tech Deep Dive", host: "AI Generated", color: "bg-accent/10" },
-  { title: "Creative Hour", host: "AI Generated", color: "bg-secondary" },
-];
+{ title: "Morning Insights", host: "AI Generated", color: "bg-primary/10" },
+{ title: "Tech Deep Dive", host: "AI Generated", color: "bg-accent/10" },
+{ title: "Creative Hour", host: "AI Generated", color: "bg-secondary" }];
+
 
 const HeroSection = () => {
   return (
@@ -19,8 +19,8 @@ const HeroSection = () => {
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.7 }}
-          >
+            transition={{ duration: 0.7 }}>
+
             <p className="mb-3 text-sm font-medium tracking-wide text-muted-foreground">
               AI-Powered Podcast Studio
             </p>
@@ -74,20 +74,20 @@ const HeroSection = () => {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="relative flex items-center justify-center"
-          >
+            className="relative flex items-center justify-center">
+
             <img
-              src={heroPerson}
+
               alt="Person listening to podcast"
-              className="relative z-10 w-full max-w-md mx-auto"
-            />
+              className="relative z-10 w-full max-w-md mx-auto" src="/lovable-uploads/9b398423-267d-4d56-a449-78ae5828e096.png" />
+
 
             {/* Floating badges */}
             <motion.div
               animate={{ y: [0, -8, 0] }}
               transition={{ duration: 4, repeat: Infinity }}
-              className="absolute top-8 right-4 lg:right-0 floating-badge flex items-center gap-2"
-            >
+              className="absolute top-8 right-4 lg:right-0 floating-badge flex items-center gap-2">
+
               <AudioWaveform className="h-4 w-4 text-primary" />
               <span className="text-foreground">Studio Quality</span>
             </motion.div>
@@ -95,8 +95,8 @@ const HeroSection = () => {
             <motion.div
               animate={{ y: [0, 8, 0] }}
               transition={{ duration: 5, repeat: Infinity, delay: 1 }}
-              className="absolute bottom-24 left-0 floating-badge flex items-center gap-2"
-            >
+              className="absolute bottom-24 left-0 floating-badge flex items-center gap-2">
+
               <div className="flex h-6 w-6 items-center justify-center rounded-full gradient-bg">
                 <Play className="h-3 w-3 text-primary-foreground" />
               </div>
@@ -113,13 +113,13 @@ const HeroSection = () => {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.5 }}
-          className="mt-12 grid gap-4 sm:grid-cols-3"
-        >
-          {podcastCards.map((pod) => (
-            <div
-              key={pod.title}
-              className="glass-card flex items-center gap-4 p-4"
-            >
+          className="mt-12 grid gap-4 sm:grid-cols-3">
+
+          {podcastCards.map((pod) =>
+          <div
+            key={pod.title}
+            className="glass-card flex items-center gap-4 p-4">
+
               <div className={`flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl ${pod.color}`}>
                 <Headphones className="h-5 w-5 text-primary" />
               </div>
@@ -131,11 +131,11 @@ const HeroSection = () => {
                 Listen
               </Button>
             </div>
-          ))}
+          )}
         </motion.div>
       </div>
-    </section>
-  );
+    </section>);
+
 };
 
 export default HeroSection;
