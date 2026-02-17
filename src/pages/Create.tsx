@@ -4,17 +4,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
-import { ArrowLeft, Sparkles, Loader2, Play, Download, Mic2 } from "lucide-react";
+import { ArrowLeft, Sparkles, Loader2, Play, Download, Mic2, Square } from "lucide-react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-
-const voices = [
-  { id: "alex", name: "Alex", desc: "Warm, conversational male" },
-  { id: "maya", name: "Maya", desc: "Energetic, professional female" },
-  { id: "sam", name: "Sam", desc: "Calm, authoritative male" },
-  { id: "zara", name: "Zara", desc: "Friendly, upbeat female" },
-  { id: "duo", name: "Alex & Maya", desc: "Two-speaker dialogue" },
-];
+import { voices } from "@/lib/voices";
+import { useTTS } from "@/hooks/useTTS";
 
 const Create = () => {
   const [prompt, setPrompt] = useState("");
