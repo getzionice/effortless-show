@@ -77,9 +77,9 @@ const HeroSection = () => {
             className="relative flex items-center justify-center">
 
             <img
-
+              src={heroPerson}
               alt="Person listening to podcast"
-              className="relative z-10 w-full max-w-md mx-auto" src="/lovable-uploads/f619e721-4cae-4570-baea-ec2bdf9fdb68.png" />
+              className="relative z-10 w-full max-w-md mx-auto" />
 
 
             {/* Floating badges */}
