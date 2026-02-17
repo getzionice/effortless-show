@@ -79,7 +79,7 @@ const HeroSection = () => {
             <img
 
               alt="Person listening to podcast"
-              className="relative z-10 w-full max-w-md mx-auto" src="/lovable-uploads/9b398423-267d-4d56-a449-78ae5828e096.png" />
+              className="relative z-10 w-full max-w-md mx-auto" src="/lovable-uploads/f619e721-4cae-4570-baea-ec2bdf9fdb68.png" />
 
 
             {/* Floating badges */}
