@@ -1,15 +1,17 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ArrowLeft, Sparkles, Loader2, Play, Download, Mic2, Square, Pause } from "lucide-react";
+import { ArrowLeft, Sparkles, Loader2, Play, Download, Mic2, Pause, Wand2 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { voices } from "@/lib/voices";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+
+const SCRIPT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/generate-script`;
 
 const Create = () => {
   const [text, setText] = useState("");
@@ -18,12 +20,88 @@ const Create = () => {
   const [generating, setGenerating] = useState(false);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [scriptPrompt, setScriptPrompt] = useState("");
+  const [writingScript, setWritingScript] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const { user } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
 
   const selectedVoice = voices.find((v) => v.id === voiceId);
+
+  const handleGenerateScript = useCallback(async () => {
+    if (!scriptPrompt.trim()) return;
+    setWritingScript(true);
+    setText("");
+
+    try {
+      const resp = await fetch(SCRIPT_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+        },
+        body: JSON.stringify({ topic: scriptPrompt, style: "conversational and engaging", duration: 5 }),
+      });
+
+      if (!resp.ok) {
+        const err = await resp.json().catch(() => ({ error: "Script generation failed" }));
+        throw new Error(err.error || `Failed: ${resp.status}`);
+      }
+
+      if (!resp.body) throw new Error("No stream body");
+
+      const reader = resp.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = "";
+      let fullScript = "";
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+
+        let newlineIndex: number;
+        while ((newlineIndex = buffer.indexOf("\n")) !== -1) {
+          let line = buffer.slice(0, newlineIndex);
+          buffer = buffer.slice(newlineIndex + 1);
+          if (line.endsWith("\r")) line = line.slice(0, -1);
+          if (line.startsWith(":") || line.trim() === "") continue;
+          if (!line.startsWith("data: ")) continue;
+
+          const jsonStr = line.slice(6).trim();
+          if (jsonStr === "[DONE]") break;
+
+          try {
+            const parsed = JSON.parse(jsonStr);
+            const content = parsed.choices?.[0]?.delta?.content;
+            if (content) {
+              fullScript += content;
+              setText(fullScript);
+            }
+          } catch {
+            buffer = line + "\n" + buffer;
+            break;
+          }
+        }
+      }
+
+      if (!title && scriptPrompt.length < 60) {
+        setTitle(scriptPrompt);
+      }
+      toast({ title: "Script ready!", description: "Review and edit, then generate audio." });
+    } catch (error) {
+      console.error("Script generation failed:", error);
+      toast({
+        title: "Script generation failed",
+        description: error instanceof Error ? error.message : "Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setWritingScript(false);
+    }
+  }, [scriptPrompt, title, toast]);
 
   const handleGenerate = async () => {
     if (!text || !voiceId) return;
@@ -147,12 +225,46 @@ const Create = () => {
             />
           </div>
 
+          {/* AI Script Writer */}
+          <div className="glass-card p-5 space-y-3 border-primary/10">
+            <div className="flex items-center gap-2">
+              <Wand2 className="h-4 w-4 text-primary" />
+              <label className="text-sm font-semibold">AI Script Writer</label>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Describe your topic and AI will write a podcast-ready script for you.
+            </p>
+            <div className="flex gap-3">
+              <Input
+                placeholder="e.g. The impact of AI on creative industries..."
+                value={scriptPrompt}
+                onChange={(e) => setScriptPrompt(e.target.value)}
+                className="bg-card border-border"
+                disabled={writingScript}
+              />
+              <Button
+                variant="hero"
+                size="sm"
+                onClick={handleGenerateScript}
+                disabled={!scriptPrompt.trim() || writingScript}
+                className="shrink-0"
+              >
+                {writingScript ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Wand2 className="h-4 w-4" />
+                )}
+                {writingScript ? "Writing..." : "Write Script"}
+              </Button>
+            </div>
+          </div>
+
           <div className="space-y-2">
             <label className="text-sm font-medium text-muted-foreground">
               Your script or text <span className="text-primary">*</span>
             </label>
             <Textarea
-              placeholder="Enter the text you'd like to convert to speech..."
+              placeholder="Enter text manually or use the AI writer above..."
               value={text}
               onChange={(e) => setText(e.target.value)}
               className="bg-card border-border min-h-[160px] resize-none text-base"
