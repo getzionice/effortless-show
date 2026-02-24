@@ -12,6 +12,7 @@ import Settings from "./pages/Settings";
 import ApiKeys from "./pages/ApiKeys";
 import Teams from "./pages/Teams";
 import Analytics from "./pages/Analytics";
+import Playlists from "./pages/Playlists";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -32,6 +33,7 @@ const App = () => (
             <Route path="/api-keys" element={<ApiKeys />} />
             <Route path="/teams" element={<Teams />} />
             <Route path="/analytics" element={<Analytics />} />
+            <Route path="/playlists" element={<Playlists />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
