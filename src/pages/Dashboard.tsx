@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Play, Download, Trash2, Mic2, Plus, Loader2 } from "lucide-react";
+import { ArrowLeft, Download, Trash2, Mic2, Plus, Loader2, Globe, GlobeLock, Rss } from "lucide-react";
 import { motion } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -14,12 +14,14 @@ interface Generation {
   voice_name: string;
   audio_url: string | null;
   created_at: string;
+  is_published: boolean;
 }
 
 const Dashboard = () => {
   const [generations, setGenerations] = useState<Generation[]>([]);
   const [loading, setLoading] = useState(true);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [togglingId, setTogglingId] = useState<string | null>(null);
   const { user, loading: authLoading } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -49,7 +51,6 @@ const Dashboard = () => {
   const handleDelete = async (gen: Generation) => {
     setDeletingId(gen.id);
     try {
-      // Delete audio from storage if exists
       if (gen.audio_url) {
         const path = gen.audio_url.split("/audio-generations/")[1];
         if (path) {
@@ -67,6 +68,34 @@ const Dashboard = () => {
       setDeletingId(null);
     }
   };
+
+  const handleTogglePublish = async (gen: Generation) => {
+    setTogglingId(gen.id);
+    try {
+      const newVal = !gen.is_published;
+      const { error } = await supabase
+        .from("generations")
+        .update({ is_published: newVal })
+        .eq("id", gen.id);
+      if (error) throw error;
+      setGenerations((prev) =>
+        prev.map((g) => (g.id === gen.id ? { ...g, is_published: newVal } : g))
+      );
+      toast({
+        title: newVal ? "Published" : "Unpublished",
+        description: newVal
+          ? "Episode is now in your public RSS feed."
+          : "Episode removed from public feed.",
+      });
+    } catch (error) {
+      console.error("Toggle publish failed:", error);
+      toast({ title: "Failed to update", variant: "destructive" });
+    } finally {
+      setTogglingId(null);
+    }
+  };
+
+  const rssUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/podcast-rss`;
 
   if (authLoading || loading) {
     return (
@@ -87,12 +116,20 @@ const Dashboard = () => {
             </Button>
           </Link>
           <span className="font-display text-lg font-semibold">My Episodes</span>
-          <Link to="/create" className="ml-auto">
-            <Button variant="hero" size="sm">
-              <Plus className="h-4 w-4" />
-              New Episode
-            </Button>
-          </Link>
+          <div className="ml-auto flex items-center gap-2">
+            <a href={rssUrl} target="_blank" rel="noopener noreferrer">
+              <Button variant="outline" size="sm" className="gap-1.5">
+                <Rss className="h-4 w-4" />
+                RSS Feed
+              </Button>
+            </a>
+            <Link to="/create">
+              <Button variant="hero" size="sm">
+                <Plus className="h-4 w-4" />
+                New Episode
+              </Button>
+            </Link>
+          </div>
         </div>
       </div>
 
@@ -127,9 +164,17 @@ const Dashboard = () => {
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0 flex-1">
-                    <h3 className="font-display font-semibold truncate">
-                      {gen.title || "Untitled"}
-                    </h3>
+                    <div className="flex items-center gap-2">
+                      <h3 className="font-display font-semibold truncate">
+                        {gen.title || "Untitled"}
+                      </h3>
+                      {gen.is_published && (
+                        <span className="shrink-0 inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary">
+                          <Globe className="h-3 w-3" />
+                          Public
+                        </span>
+                      )}
+                    </div>
                     <p className="text-xs text-muted-foreground mt-1">
                       {gen.voice_name} · {new Date(gen.created_at).toLocaleDateString()}
                     </p>
@@ -137,19 +182,36 @@ const Dashboard = () => {
                       {gen.text_input}
                     </p>
                   </div>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="text-destructive hover:text-destructive shrink-0"
-                    onClick={() => handleDelete(gen)}
-                    disabled={deletingId === gen.id}
-                  >
-                    {deletingId === gen.id ? (
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                    ) : (
-                      <Trash2 className="h-4 w-4" />
-                    )}
-                  </Button>
+                  <div className="flex items-center gap-1 shrink-0">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleTogglePublish(gen)}
+                      disabled={togglingId === gen.id || !gen.audio_url}
+                      title={gen.is_published ? "Unpublish from feed" : "Publish to feed"}
+                    >
+                      {togglingId === gen.id ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : gen.is_published ? (
+                        <Globe className="h-4 w-4 text-primary" />
+                      ) : (
+                        <GlobeLock className="h-4 w-4 text-muted-foreground" />
+                      )}
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="text-destructive hover:text-destructive"
+                      onClick={() => handleDelete(gen)}
+                      disabled={deletingId === gen.id}
+                    >
+                      {deletingId === gen.id ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <Trash2 className="h-4 w-4" />
+                      )}
+                    </Button>
+                  </div>
                 </div>
 
                 {gen.audio_url && (
