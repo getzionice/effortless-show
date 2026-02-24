@@ -15,6 +15,10 @@ import { templates, templateCategories, EpisodeTemplate } from "@/lib/templates"
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+
+
 
 const SCRIPT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/generate-script`;
 const TTS_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/elevenlabs-tts`;
@@ -354,27 +358,8 @@ const Create = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="border-b border-border bg-card/80 backdrop-blur-xl">
-        <div className="container mx-auto flex h-16 items-center gap-4 px-4">
-          <Link to="/">
-            <Button variant="ghost" size="sm">
-              <ArrowLeft className="h-4 w-4" />
-              Back
-            </Button>
-          </Link>
-          <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-full gradient-bg">
-              <Mic2 className="h-4 w-4 text-primary-foreground" />
-            </div>
-            <span className="font-display text-lg font-semibold">Create Episode</span>
-          </div>
-          {user && (
-            <Link to="/dashboard" className="ml-auto">
-              <Button variant="outline" size="sm">My Episodes</Button>
-            </Link>
-          )}
-        </div>
-      </div>
+      <Navbar />
+      <div className="pt-16">
 
       <div className="container mx-auto max-w-6xl px-4 py-10">
         <div className="grid lg:grid-cols-[340px_1fr] gap-8 items-start">
@@ -696,6 +681,8 @@ const Create = () => {
           </motion.div>
         </div>
       </div>
+      </div>
+      <Footer />
     </div>
   );
 };
