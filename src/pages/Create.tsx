@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
@@ -6,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   ArrowLeft, Sparkles, Loader2, Play, Download, Mic2, Pause, Wand2,
-  Plus, Trash2, GripVertical, Users, User, LayoutTemplate,
+  Plus, Trash2, GripVertical, Users, User, LayoutTemplate, Lock,
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
@@ -17,6 +17,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+
+const FREE_GENERATION_LIMIT = 3;
 
 
 
@@ -45,6 +47,19 @@ const Create = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
+
+  // Free plan limit
+  const [generationCount, setGenerationCount] = useState<number | null>(null);
+  const limitReached = generationCount !== null && generationCount >= FREE_GENERATION_LIMIT;
+
+  useEffect(() => {
+    if (!user) return;
+    supabase
+      .from("generations")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", user.id)
+      .then(({ count }) => setGenerationCount(count ?? 0));
+  }, [user]);
 
   // Single-voice state
   const [text, setText] = useState("");
@@ -266,6 +281,11 @@ const Create = () => {
       return;
     }
 
+    if (limitReached) {
+      toast({ title: "Free limit reached", description: "Upgrade to Pro for unlimited generations.", variant: "destructive" });
+      return;
+    }
+
     if (mode === "single" && (!text || !voiceId)) return;
     if (mode === "multi" && segments.filter((s) => s.text.trim() && s.voiceId).length === 0) return;
 
@@ -327,6 +347,7 @@ const Create = () => {
       if (insertError) throw insertError;
 
       setAudioUrl(urlData.publicUrl);
+      setGenerationCount((prev) => (prev ?? 0) + 1);
       toast({ title: "Audio generated!", description: "Your episode is ready to play." });
     } catch (error) {
       console.error("Generation failed:", error);
@@ -352,9 +373,9 @@ const Create = () => {
     a.click();
   };
 
-  const canGenerate = mode === "single"
+  const canGenerate = !limitReached && (mode === "single"
     ? text.trim() && voiceId && !generating && text.length <= 5000
-    : segments.some((s) => s.text.trim() && s.voiceId) && !generating;
+    : segments.some((s) => s.text.trim() && s.voiceId) && !generating);
 
   return (
     <div className="min-h-screen bg-background">
@@ -606,26 +627,54 @@ const Create = () => {
               </TabsContent>
             </Tabs>
 
-            {/* Generate button */}
-            <Button
-              variant="hero"
-              size="xl"
-              className="w-full rounded-full"
-              onClick={handleGenerate}
-              disabled={!canGenerate}
-            >
-              {generating ? (
-                <>
-                  <Loader2 className="h-5 w-5 animate-spin" />
-                  {generationProgress || "Generating..."}
-                </>
-              ) : (
-                <>
-                  <Sparkles className="h-5 w-5" />
-                  {mode === "multi" ? "Generate Conversation" : "Generate Episode"}
-                </>
-              )}
-            </Button>
+            {/* Free plan limit banner */}
+            {user && generationCount !== null && (
+              <div className="flex items-center justify-between text-sm text-muted-foreground bg-muted/50 rounded-lg px-4 py-2.5">
+                <span>
+                  {limitReached
+                    ? "Free plan limit reached (3/3)"
+                    : `${generationCount}/${FREE_GENERATION_LIMIT} free generations used`}
+                </span>
+                {limitReached && (
+                  <span className="text-xs font-medium text-primary">Upgrade required</span>
+                )}
+              </div>
+            )}
+
+            {/* Upgrade wall */}
+            {limitReached ? (
+              <div className="glass-card p-6 text-center space-y-3 border-primary/20">
+                <Lock className="h-8 w-8 text-primary mx-auto" />
+                <h3 className="font-display text-lg font-semibold">Upgrade to Pro</h3>
+                <p className="text-sm text-muted-foreground">
+                  You've used all 3 free generations. Upgrade to Pro for unlimited episodes, priority rendering, and more.
+                </p>
+                <Button variant="hero" size="lg" className="rounded-full" disabled>
+                  Coming Soon
+                </Button>
+              </div>
+            ) : (
+              /* Generate button */
+              <Button
+                variant="hero"
+                size="xl"
+                className="w-full rounded-full"
+                onClick={handleGenerate}
+                disabled={!canGenerate}
+              >
+                {generating ? (
+                  <>
+                    <Loader2 className="h-5 w-5 animate-spin" />
+                    {generationProgress || "Generating..."}
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="h-5 w-5" />
+                    {mode === "multi" ? "Generate Conversation" : "Generate Episode"}
+                  </>
+                )}
+              </Button>
+            )}
 
             {/* Audio result */}
             <AnimatePresence>
