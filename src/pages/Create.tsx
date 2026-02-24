@@ -376,51 +376,51 @@ const Create = () => {
         </div>
       </div>
 
-      <div className="container mx-auto max-w-3xl px-4 py-12">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="space-y-8"
-        >
-          {/* Template Library */}
-          <div className="space-y-4">
+      <div className="container mx-auto max-w-6xl px-4 py-10">
+        <div className="grid lg:grid-cols-[340px_1fr] gap-8 items-start">
+          {/* ─── Left: Template Library ─── */}
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="space-y-4 lg:sticky lg:top-24"
+          >
             <div className="flex items-center gap-2">
               <LayoutTemplate className="h-4 w-4 text-primary" />
-              <label className="text-sm font-semibold">Start from a Template</label>
+              <label className="text-sm font-semibold">Templates</label>
             </div>
-            <div className="flex gap-2 flex-wrap">
+            <div className="flex gap-1.5 flex-wrap">
               {templateCategories.map((cat) => (
                 <Button
                   key={cat.id}
                   variant={templateCategory === cat.id ? "default" : "outline"}
                   size="sm"
-                  className="rounded-full text-xs"
+                  className="rounded-full text-xs h-7 px-2.5"
                   onClick={() => setTemplateCategory(cat.id)}
                 >
                   {cat.label}
                 </Button>
               ))}
             </div>
-            <div className="grid gap-3 sm:grid-cols-2">
+            <div className="space-y-2.5 max-h-[calc(100vh-220px)] overflow-y-auto pr-1">
               {filteredTemplates.map((template) => (
                 <motion.button
                   key={template.id}
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  className="glass-card p-4 text-left hover:border-primary/30 transition-colors cursor-pointer"
+                  className="glass-card p-3.5 text-left hover:border-primary/30 transition-colors cursor-pointer w-full"
                   onClick={() => applyTemplate(template)}
                 >
                   <div className="flex items-start gap-3">
-                    <span className="text-2xl">{template.icon}</span>
+                    <span className="text-xl">{template.icon}</span>
                     <div className="min-w-0">
                       <p className="font-display font-semibold text-sm">{template.name}</p>
-                      <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{template.description}</p>
-                      <div className="flex items-center gap-2 mt-2">
-                        <span className="text-xs bg-muted px-2 py-0.5 rounded-full capitalize">{template.category}</span>
+                      <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">{template.description}</p>
+                      <div className="flex items-center gap-1.5 mt-1.5">
+                        <span className="text-[10px] bg-muted px-1.5 py-0.5 rounded-full capitalize">{template.category}</span>
                         {template.mode === "multi" && (
-                          <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full flex items-center gap-1">
-                            <Users className="h-3 w-3" />
-                            Multi-voice
+                          <span className="text-[10px] bg-primary/10 text-primary px-1.5 py-0.5 rounded-full flex items-center gap-0.5">
+                            <Users className="h-2.5 w-2.5" />
+                            Multi
                           </span>
                         )}
                       </div>
@@ -429,277 +429,272 @@ const Create = () => {
                 </motion.button>
               ))}
             </div>
-          </div>
+          </motion.div>
 
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-border" />
-            </div>
-            <div className="relative flex justify-center">
-              <span className="bg-background px-4 text-xs text-muted-foreground">or start from scratch</span>
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-muted-foreground">Episode Title</label>
-            <Input
-              placeholder="e.g. The Future of AI in Healthcare"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              className="bg-card border-border text-lg h-12"
-            />
-          </div>
-
-          {/* Mode tabs */}
-          <Tabs value={mode} onValueChange={(v) => setMode(v as "single" | "multi")}>
-            <TabsList className="w-full">
-              <TabsTrigger value="single" className="flex-1 gap-2">
-                <User className="h-4 w-4" />
-                Single Voice
-              </TabsTrigger>
-              <TabsTrigger value="multi" className="flex-1 gap-2">
-                <Users className="h-4 w-4" />
-                Multi-Voice Conversation
-              </TabsTrigger>
-            </TabsList>
-
-            {/* ── Single Voice ── */}
-            <TabsContent value="single" className="space-y-6 mt-6">
-              {/* AI Script Writer */}
-              <div className="glass-card p-5 space-y-3 border-primary/10">
-                <div className="flex items-center gap-2">
-                  <Wand2 className="h-4 w-4 text-primary" />
-                  <label className="text-sm font-semibold">AI Script Writer</label>
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  Describe your topic and AI will write a podcast-ready script.
-                </p>
-                <div className="flex gap-3">
-                  <Input
-                    placeholder="e.g. The impact of AI on creative industries..."
-                    value={scriptPrompt}
-                    onChange={(e) => setScriptPrompt(e.target.value)}
-                    className="bg-card border-border"
-                    disabled={writingScript}
-                  />
-                  <Button
-                    variant="hero"
-                    size="sm"
-                    onClick={handleGenerateScript}
-                    disabled={!scriptPrompt.trim() || writingScript}
-                    className="shrink-0"
-                  >
-                    {writingScript ? <Loader2 className="h-4 w-4 animate-spin" /> : <Wand2 className="h-4 w-4" />}
-                    {writingScript ? "Writing..." : "Write Script"}
-                  </Button>
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-muted-foreground">
-                  Your script or text <span className="text-primary">*</span>
-                </label>
-                <Textarea
-                  placeholder="Enter text manually or use the AI writer above..."
-                  value={text}
-                  onChange={(e) => setText(e.target.value)}
-                  className="bg-card border-border min-h-[160px] resize-none text-base"
-                />
-                <p className="text-xs text-muted-foreground">{text.length} / 5000 characters</p>
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-muted-foreground">Voice</label>
-                <Select value={voiceId} onValueChange={setVoiceId}>
-                  <SelectTrigger className="bg-card border-border h-12">
-                    <SelectValue placeholder="Choose a voice" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {voices.map((v) => (
-                      <SelectItem key={v.id} value={v.id}>
-                        <span className="font-medium">{v.name}</span>
-                        <span className="ml-2 text-muted-foreground text-xs">— {v.desc}</span>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </TabsContent>
-
-            {/* ── Multi-Voice Conversation ── */}
-            <TabsContent value="multi" className="space-y-6 mt-6">
-              {/* AI Dialogue Writer */}
-              <div className="glass-card p-5 space-y-3 border-primary/10">
-                <div className="flex items-center gap-2">
-                  <Wand2 className="h-4 w-4 text-primary" />
-                  <label className="text-sm font-semibold">AI Dialogue Writer</label>
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  Describe a topic and AI will write a conversation between your chosen voices.
-                </p>
-                <div className="flex gap-3">
-                  <Input
-                    placeholder="e.g. Debate about whether AI will replace human creativity..."
-                    value={dialoguePrompt}
-                    onChange={(e) => setDialoguePrompt(e.target.value)}
-                    className="bg-card border-border"
-                    disabled={writingDialogue}
-                  />
-                  <Button
-                    variant="hero"
-                    size="sm"
-                    onClick={handleGenerateDialogue}
-                    disabled={!dialoguePrompt.trim() || writingDialogue}
-                    className="shrink-0"
-                  >
-                    {writingDialogue ? <Loader2 className="h-4 w-4 animate-spin" /> : <Wand2 className="h-4 w-4" />}
-                    {writingDialogue ? "Writing..." : "Write Dialogue"}
-                  </Button>
-                </div>
-              </div>
-
-              {/* Dialogue segments */}
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <label className="text-sm font-medium text-muted-foreground">
-                    Dialogue Segments
-                  </label>
-                  <Button variant="outline" size="sm" onClick={addSegment}>
-                    <Plus className="h-4 w-4" />
-                    Add Segment
-                  </Button>
-                </div>
-
-                {segments.map((seg, i) => {
-                  const segVoice = voices.find((v) => v.id === seg.voiceId);
-                  return (
-                    <motion.div
-                      key={seg.id}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="glass-card p-4 space-y-3"
-                    >
-                      <div className="flex items-center gap-3">
-                        <GripVertical className="h-4 w-4 text-muted-foreground shrink-0" />
-                        <span className="text-xs font-medium text-muted-foreground w-6">#{i + 1}</span>
-                        <Select
-                          value={seg.voiceId}
-                          onValueChange={(v) => updateSegment(seg.id, "voiceId", v)}
-                        >
-                          <SelectTrigger className="bg-card border-border h-9 w-48">
-                            <SelectValue placeholder="Voice" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {voices.map((v) => (
-                              <SelectItem key={v.id} value={v.id}>
-                                {v.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        {segVoice && (
-                          <div className="flex h-7 w-7 items-center justify-center rounded-full gradient-bg shrink-0">
-                            <Mic2 className="h-3 w-3 text-primary-foreground" />
-                          </div>
-                        )}
-                        <div className="flex-1" />
-                        {segments.length > 1 && (
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="text-destructive hover:text-destructive shrink-0"
-                            onClick={() => removeSegment(seg.id)}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        )}
-                      </div>
-                      <Textarea
-                        placeholder={`What does ${segVoice?.name || "this voice"} say?`}
-                        value={seg.text}
-                        onChange={(e) => updateSegment(seg.id, "text", e.target.value)}
-                        className="bg-card border-border min-h-[80px] resize-none text-sm"
-                      />
-                    </motion.div>
-                  );
-                })}
-              </div>
-            </TabsContent>
-          </Tabs>
-
-          {/* Generate button */}
-          <Button
-            variant="hero"
-            size="xl"
-            className="w-full rounded-full"
-            onClick={handleGenerate}
-            disabled={!canGenerate}
+          {/* ─── Right: Generator ─── */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="space-y-6"
           >
-            {generating ? (
-              <>
-                <Loader2 className="h-5 w-5 animate-spin" />
-                {generationProgress || "Generating..."}
-              </>
-            ) : (
-              <>
-                <Sparkles className="h-5 w-5" />
-                {mode === "multi" ? "Generate Conversation" : "Generate Episode"}
-              </>
-            )}
-          </Button>
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-muted-foreground">Episode Title</label>
+              <Input
+                placeholder="e.g. The Future of AI in Healthcare"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                className="bg-card border-border text-lg h-12"
+              />
+            </div>
 
-          {/* Audio result */}
-          <AnimatePresence>
-            {audioUrl && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0 }}
-                className="glass-card p-6 space-y-4 border-primary/20"
-              >
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="font-display text-lg font-semibold">
-                      {title || "Untitled Episode"}
-                    </h3>
-                    <p className="text-sm text-muted-foreground">
-                      {mode === "multi"
-                        ? `${[...new Set(segments.map((s) => voices.find((v) => v.id === s.voiceId)?.name).filter(Boolean))].join(" & ")} · Conversation`
-                        : `${selectedVoice?.name} · Monologue`}
-                      {" "}· Ready to play
-                    </p>
+            {/* Mode tabs */}
+            <Tabs value={mode} onValueChange={(v) => setMode(v as "single" | "multi")}>
+              <TabsList className="w-full">
+                <TabsTrigger value="single" className="flex-1 gap-2">
+                  <User className="h-4 w-4" />
+                  Single Voice
+                </TabsTrigger>
+                <TabsTrigger value="multi" className="flex-1 gap-2">
+                  <Users className="h-4 w-4" />
+                  Multi-Voice
+                </TabsTrigger>
+              </TabsList>
+
+              {/* ── Single Voice ── */}
+              <TabsContent value="single" className="space-y-6 mt-6">
+                <div className="glass-card p-5 space-y-3 border-primary/10">
+                  <div className="flex items-center gap-2">
+                    <Wand2 className="h-4 w-4 text-primary" />
+                    <label className="text-sm font-semibold">AI Script Writer</label>
                   </div>
-                  <div className="flex h-12 w-12 items-center justify-center rounded-full gradient-bg">
-                    {mode === "multi" ? (
-                      <Users className="h-6 w-6 text-primary-foreground" />
-                    ) : (
-                      <Mic2 className="h-6 w-6 text-primary-foreground" />
-                    )}
+                  <p className="text-xs text-muted-foreground">
+                    Describe your topic and AI will write a podcast-ready script.
+                  </p>
+                  <div className="flex gap-3">
+                    <Input
+                      placeholder="e.g. The impact of AI on creative industries..."
+                      value={scriptPrompt}
+                      onChange={(e) => setScriptPrompt(e.target.value)}
+                      className="bg-card border-border"
+                      disabled={writingScript}
+                    />
+                    <Button
+                      variant="hero"
+                      size="sm"
+                      onClick={handleGenerateScript}
+                      disabled={!scriptPrompt.trim() || writingScript}
+                      className="shrink-0"
+                    >
+                      {writingScript ? <Loader2 className="h-4 w-4 animate-spin" /> : <Wand2 className="h-4 w-4" />}
+                      {writingScript ? "Writing..." : "Write Script"}
+                    </Button>
                   </div>
                 </div>
 
-                <audio
-                  ref={audioRef}
-                  src={audioUrl}
-                  onEnded={() => setIsPlaying(false)}
-                  className="w-full"
-                  controls
-                />
-
-                <div className="flex gap-3">
-                  <Button variant="hero" className="flex-1 rounded-full" onClick={togglePlay}>
-                    {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
-                    {isPlaying ? "Pause" : "Play"}
-                  </Button>
-                  <Button variant="outline" className="flex-1 rounded-full" onClick={handleDownload}>
-                    <Download className="h-4 w-4" />
-                    Download
-                  </Button>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-muted-foreground">
+                    Your script or text <span className="text-primary">*</span>
+                  </label>
+                  <Textarea
+                    placeholder="Enter text manually or use the AI writer above..."
+                    value={text}
+                    onChange={(e) => setText(e.target.value)}
+                    className="bg-card border-border min-h-[160px] resize-none text-base"
+                  />
+                  <p className="text-xs text-muted-foreground">{text.length} / 5000 characters</p>
                 </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </motion.div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-muted-foreground">Voice</label>
+                  <Select value={voiceId} onValueChange={setVoiceId}>
+                    <SelectTrigger className="bg-card border-border h-12">
+                      <SelectValue placeholder="Choose a voice" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {voices.map((v) => (
+                        <SelectItem key={v.id} value={v.id}>
+                          <span className="font-medium">{v.name}</span>
+                          <span className="ml-2 text-muted-foreground text-xs">— {v.desc}</span>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </TabsContent>
+
+              {/* ── Multi-Voice Conversation ── */}
+              <TabsContent value="multi" className="space-y-6 mt-6">
+                <div className="glass-card p-5 space-y-3 border-primary/10">
+                  <div className="flex items-center gap-2">
+                    <Wand2 className="h-4 w-4 text-primary" />
+                    <label className="text-sm font-semibold">AI Dialogue Writer</label>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Describe a topic and AI will write a conversation between your chosen voices.
+                  </p>
+                  <div className="flex gap-3">
+                    <Input
+                      placeholder="e.g. Debate about whether AI will replace human creativity..."
+                      value={dialoguePrompt}
+                      onChange={(e) => setDialoguePrompt(e.target.value)}
+                      className="bg-card border-border"
+                      disabled={writingDialogue}
+                    />
+                    <Button
+                      variant="hero"
+                      size="sm"
+                      onClick={handleGenerateDialogue}
+                      disabled={!dialoguePrompt.trim() || writingDialogue}
+                      className="shrink-0"
+                    >
+                      {writingDialogue ? <Loader2 className="h-4 w-4 animate-spin" /> : <Wand2 className="h-4 w-4" />}
+                      {writingDialogue ? "Writing..." : "Write Dialogue"}
+                    </Button>
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <label className="text-sm font-medium text-muted-foreground">
+                      Dialogue Segments
+                    </label>
+                    <Button variant="outline" size="sm" onClick={addSegment}>
+                      <Plus className="h-4 w-4" />
+                      Add Segment
+                    </Button>
+                  </div>
+
+                  {segments.map((seg, i) => {
+                    const segVoice = voices.find((v) => v.id === seg.voiceId);
+                    return (
+                      <motion.div
+                        key={seg.id}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="glass-card p-4 space-y-3"
+                      >
+                        <div className="flex items-center gap-3">
+                          <GripVertical className="h-4 w-4 text-muted-foreground shrink-0" />
+                          <span className="text-xs font-medium text-muted-foreground w-6">#{i + 1}</span>
+                          <Select
+                            value={seg.voiceId}
+                            onValueChange={(v) => updateSegment(seg.id, "voiceId", v)}
+                          >
+                            <SelectTrigger className="bg-card border-border h-9 w-48">
+                              <SelectValue placeholder="Voice" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {voices.map((v) => (
+                                <SelectItem key={v.id} value={v.id}>
+                                  {v.name}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          {segVoice && (
+                            <div className="flex h-7 w-7 items-center justify-center rounded-full gradient-bg shrink-0">
+                              <Mic2 className="h-3 w-3 text-primary-foreground" />
+                            </div>
+                          )}
+                          <div className="flex-1" />
+                          {segments.length > 1 && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="text-destructive hover:text-destructive shrink-0"
+                              onClick={() => removeSegment(seg.id)}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          )}
+                        </div>
+                        <Textarea
+                          placeholder={`What does ${segVoice?.name || "this voice"} say?`}
+                          value={seg.text}
+                          onChange={(e) => updateSegment(seg.id, "text", e.target.value)}
+                          className="bg-card border-border min-h-[80px] resize-none text-sm"
+                        />
+                      </motion.div>
+                    );
+                  })}
+                </div>
+              </TabsContent>
+            </Tabs>
+
+            {/* Generate button */}
+            <Button
+              variant="hero"
+              size="xl"
+              className="w-full rounded-full"
+              onClick={handleGenerate}
+              disabled={!canGenerate}
+            >
+              {generating ? (
+                <>
+                  <Loader2 className="h-5 w-5 animate-spin" />
+                  {generationProgress || "Generating..."}
+                </>
+              ) : (
+                <>
+                  <Sparkles className="h-5 w-5" />
+                  {mode === "multi" ? "Generate Conversation" : "Generate Episode"}
+                </>
+              )}
+            </Button>
+
+            {/* Audio result */}
+            <AnimatePresence>
+              {audioUrl && (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0 }}
+                  className="glass-card p-6 space-y-4 border-primary/20"
+                >
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="font-display text-lg font-semibold">
+                        {title || "Untitled Episode"}
+                      </h3>
+                      <p className="text-sm text-muted-foreground">
+                        {mode === "multi"
+                          ? `${[...new Set(segments.map((s) => voices.find((v) => v.id === s.voiceId)?.name).filter(Boolean))].join(" & ")} · Conversation`
+                          : `${selectedVoice?.name} · Monologue`}
+                        {" "}· Ready to play
+                      </p>
+                    </div>
+                    <div className="flex h-12 w-12 items-center justify-center rounded-full gradient-bg">
+                      {mode === "multi" ? (
+                        <Users className="h-6 w-6 text-primary-foreground" />
+                      ) : (
+                        <Mic2 className="h-6 w-6 text-primary-foreground" />
+                      )}
+                    </div>
+                  </div>
+
+                  <audio
+                    ref={audioRef}
+                    src={audioUrl}
+                    onEnded={() => setIsPlaying(false)}
+                    className="w-full"
+                    controls
+                  />
+
+                  <div className="flex gap-3">
+                    <Button variant="hero" className="flex-1 rounded-full" onClick={togglePlay}>
+                      {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+                      {isPlaying ? "Pause" : "Play"}
+                    </Button>
+                    <Button variant="outline" className="flex-1 rounded-full" onClick={handleDownload}>
+                      <Download className="h-4 w-4" />
+                      Download
+                    </Button>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </motion.div>
+        </div>
       </div>
     </div>
   );
