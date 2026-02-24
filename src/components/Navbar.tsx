@@ -36,7 +36,10 @@ const Navbar = () => {
         <div className="hidden md:flex items-center gap-3">
           {user ? (
             <>
-              <div className="flex items-center gap-2">
+              <Link to="/dashboard">
+                <Button variant="ghost" size="sm">My Episodes</Button>
+              </Link>
+              <Link to="/settings" className="flex items-center gap-2">
                 {user.user_metadata?.avatar_url && (
                   <img
                     src={user.user_metadata.avatar_url}
@@ -47,7 +50,7 @@ const Navbar = () => {
                 <span className="text-sm text-foreground font-medium">
                   {user.user_metadata?.full_name || user.email?.split("@")[0]}
                 </span>
-              </div>
+              </Link>
               <Button variant="ghost" size="sm" onClick={handleSignOut}>
                 <LogOut className="h-4 w-4 mr-1" />
                 Sign Out

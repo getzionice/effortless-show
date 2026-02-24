@@ -14,6 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
+      generations: {
+        Row: {
+          audio_url: string | null
+          created_at: string
+          duration_seconds: number | null
+          id: string
+          text_input: string
+          title: string | null
+          user_id: string
+          voice_id: string
+          voice_name: string
+        }
+        Insert: {
+          audio_url?: string | null
+          created_at?: string
+          duration_seconds?: number | null
+          id?: string
+          text_input: string
+          title?: string | null
+          user_id: string
+          voice_id: string
+          voice_name: string
+        }
+        Update: {
+          audio_url?: string | null
+          created_at?: string
+          duration_seconds?: number | null
+          id?: string
+          text_input?: string
+          title?: string | null
+          user_id?: string
+          voice_id?: string
+          voice_name?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
