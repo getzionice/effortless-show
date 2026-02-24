@@ -5,3 +5,6 @@ verify_jwt = false
 
 [functions.generate-script]
 verify_jwt = false
+
+[functions.podcast-rss]
+verify_jwt = false
