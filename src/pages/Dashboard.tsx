@@ -254,7 +254,7 @@ const Dashboard = () => {
           <Link to="/">
             <Button variant="ghost" size="sm"><ArrowLeft className="h-4 w-4" /> Back</Button>
           </Link>
-          <span className="font-display text-lg font-semibold">My Episodes</span>
+          <span className="font-display text-lg font-semibold">Dashboard</span>
           <div className="ml-auto flex items-center gap-2">
             <Link to="/playlists">
               <Button variant="outline" size="sm" className="gap-1.5">
@@ -273,7 +273,15 @@ const Dashboard = () => {
         </div>
       </div>
 
-      <div className="container mx-auto max-w-3xl px-4 py-8 space-y-5">
+      <div className="container mx-auto max-w-5xl px-4 py-8 space-y-8">
+        {/* Analytics Section */}
+        <AnalyticsSection generations={generations} />
+
+        {/* My Episodes */}
+        <h2 className="font-display text-lg font-semibold flex items-center gap-2">
+          <Mic2 className="h-5 w-5 text-primary" /> My Episodes
+        </h2>
+
         {/* Search bar */}
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -552,8 +560,6 @@ const Dashboard = () => {
           </div>
         )}
 
-        {/* Analytics Section */}
-        <AnalyticsSection generations={generations} />
       </div>
     </div>
   );
