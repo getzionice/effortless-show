@@ -83,6 +83,7 @@ export type Database = {
           duration_seconds: number | null
           id: string
           is_published: boolean
+          tags: string[]
           team_id: string | null
           text_input: string
           title: string | null
@@ -96,6 +97,7 @@ export type Database = {
           duration_seconds?: number | null
           id?: string
           is_published?: boolean
+          tags?: string[]
           team_id?: string | null
           text_input: string
           title?: string | null
@@ -109,6 +111,7 @@ export type Database = {
           duration_seconds?: number | null
           id?: string
           is_published?: boolean
+          tags?: string[]
           team_id?: string | null
           text_input?: string
           title?: string | null
