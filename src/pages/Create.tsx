@@ -6,11 +6,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   ArrowLeft, Sparkles, Loader2, Play, Download, Mic2, Pause, Wand2,
-  Plus, Trash2, GripVertical, Users, User,
+  Plus, Trash2, GripVertical, Users, User, LayoutTemplate,
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { voices, Voice } from "@/lib/voices";
+import { templates, templateCategories, EpisodeTemplate } from "@/lib/templates";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -55,7 +56,31 @@ const Create = () => {
   const [dialoguePrompt, setDialoguePrompt] = useState("");
   const [writingDialogue, setWritingDialogue] = useState(false);
 
+  // Template state
+  const [templateCategory, setTemplateCategory] = useState<string>("all");
+
+  const applyTemplate = useCallback((template: EpisodeTemplate) => {
+    setTitle("");
+    setAudioUrl(null);
+    setMode(template.mode);
+    if (template.mode === "single") {
+      setText(template.script || "");
+      setVoiceId(template.suggestedVoices[0] || "");
+      setScriptPrompt(template.scriptPrompt || "");
+    } else {
+      if (template.segments) {
+        setSegments(template.segments.map((s) => ({ id: crypto.randomUUID(), ...s })));
+      }
+      setDialoguePrompt(template.dialoguePrompt || "");
+    }
+    toast({ title: `Template loaded: ${template.name}`, description: "Customize it and generate!" });
+  }, [toast]);
+
   const selectedVoice = voices.find((v) => v.id === voiceId);
+  const filteredTemplates = templateCategory === "all"
+    ? templates
+    : templates.filter((t) => t.category === templateCategory);
+
 
   // ── AI Script Writer (single voice) ──
   const handleGenerateScript = useCallback(async () => {
@@ -357,6 +382,64 @@ const Create = () => {
           animate={{ opacity: 1, y: 0 }}
           className="space-y-8"
         >
+          {/* Template Library */}
+          <div className="space-y-4">
+            <div className="flex items-center gap-2">
+              <LayoutTemplate className="h-4 w-4 text-primary" />
+              <label className="text-sm font-semibold">Start from a Template</label>
+            </div>
+            <div className="flex gap-2 flex-wrap">
+              {templateCategories.map((cat) => (
+                <Button
+                  key={cat.id}
+                  variant={templateCategory === cat.id ? "default" : "outline"}
+                  size="sm"
+                  className="rounded-full text-xs"
+                  onClick={() => setTemplateCategory(cat.id)}
+                >
+                  {cat.label}
+                </Button>
+              ))}
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2">
+              {filteredTemplates.map((template) => (
+                <motion.button
+                  key={template.id}
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="glass-card p-4 text-left hover:border-primary/30 transition-colors cursor-pointer"
+                  onClick={() => applyTemplate(template)}
+                >
+                  <div className="flex items-start gap-3">
+                    <span className="text-2xl">{template.icon}</span>
+                    <div className="min-w-0">
+                      <p className="font-display font-semibold text-sm">{template.name}</p>
+                      <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{template.description}</p>
+                      <div className="flex items-center gap-2 mt-2">
+                        <span className="text-xs bg-muted px-2 py-0.5 rounded-full capitalize">{template.category}</span>
+                        {template.mode === "multi" && (
+                          <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full flex items-center gap-1">
+                            <Users className="h-3 w-3" />
+                            Multi-voice
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </motion.button>
+              ))}
+            </div>
+          </div>
+
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-border" />
+            </div>
+            <div className="relative flex justify-center">
+              <span className="bg-background px-4 text-xs text-muted-foreground">or start from scratch</span>
+            </div>
+          </div>
+
           <div className="space-y-2">
             <label className="text-sm font-medium text-muted-foreground">Episode Title</label>
             <Input
