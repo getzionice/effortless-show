@@ -130,6 +130,21 @@ const Settings = () => {
             Save Changes
           </Button>
         </motion.div>
+
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Link to="/api-keys">
+            <div className="glass-card p-5 hover:border-primary/30 transition-colors cursor-pointer">
+              <h3 className="font-display font-semibold mb-1">API Keys</h3>
+              <p className="text-sm text-muted-foreground">Generate keys for programmatic TTS access</p>
+            </div>
+          </Link>
+          <Link to="/teams">
+            <div className="glass-card p-5 hover:border-primary/30 transition-colors cursor-pointer">
+              <h3 className="font-display font-semibold mb-1">Teams</h3>
+              <p className="text-sm text-muted-foreground">Create teams and share episodes</p>
+            </div>
+          </Link>
+        </div>
       </div>
     </div>
   );
