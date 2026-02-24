@@ -37,7 +37,7 @@ const Navbar = () => {
           {user ? (
             <>
               <Link to="/dashboard">
-                <Button variant="ghost" size="sm">My Episodes</Button>
+                <Button variant="ghost" size="sm">Dashboard</Button>
               </Link>
               <Link to="/settings" className="flex items-center gap-2">
                 {user.user_metadata?.avatar_url && (
