@@ -11,6 +11,7 @@ import { motion } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import AnalyticsSection from "@/components/AnalyticsSection";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -34,6 +35,7 @@ interface Generation {
   created_at: string;
   is_published: boolean;
   tags: string[];
+  duration_seconds: number | null;
 }
 
 interface Playlist {
@@ -549,6 +551,9 @@ const Dashboard = () => {
             ))}
           </div>
         )}
+
+        {/* Analytics Section */}
+        <AnalyticsSection generations={generations} />
       </div>
     </div>
   );
