@@ -23,7 +23,7 @@ const Navbar = () => {
             <Mic2 className="h-4 w-4 text-primary-foreground" />
           </div>
           <span className="font-display text-xl font-semibold tracking-tight text-foreground">
-            Podcraft
+            PodcastFix
           </span>
         </Link>
 

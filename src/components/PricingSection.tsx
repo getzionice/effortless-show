@@ -8,7 +8,7 @@ const plans = [
     name: "Starter",
     price: "Free",
     period: "",
-    description: "Try Podcraft risk-free",
+    description: "Try PodcastFix risk-free",
     features: ["3 episodes/month", "10 min max length", "5 AI voices", "Standard quality audio", "Basic analytics"],
     cta: "Get Started",
     featured: false,
