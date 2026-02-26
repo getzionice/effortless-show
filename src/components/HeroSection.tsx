@@ -35,7 +35,7 @@ const HeroSection = () => {
             </h1>
 
             <p className="mb-8 max-w-md text-base text-muted-foreground leading-relaxed">
-              Podcraft creates studio-quality podcasts from a simple prompt. AI writes scripts, generates lifelike voices, and produces episodes end-to-end.
+              PodcastFix creates studio-quality podcasts from a simple prompt. AI writes scripts, generates lifelike voices, and produces episodes end-to-end.
             </p>
 
             <div className="flex flex-wrap items-center gap-4">

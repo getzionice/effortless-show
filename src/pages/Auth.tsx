@@ -94,7 +94,7 @@ const Auth = () => {
               <Mic2 className="h-7 w-7 text-primary-foreground" />
             </div>
             <h1 className="font-display text-3xl font-bold text-foreground">
-              Welcome to Podcraft
+              Welcome to PodcastFix
             </h1>
             <p className="text-muted-foreground">
               {isSignUp ? "Create an account to get started" : "Sign in to start creating AI-powered podcasts"}
