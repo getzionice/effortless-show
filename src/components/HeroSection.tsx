@@ -45,10 +45,12 @@ const HeroSection = () => {
                   <Play className="h-4 w-4" />
                 </Button>
               </Link>
-              <Button variant="outline" size="lg" className="rounded-full">
-                Library
-                <ArrowRight className="h-4 w-4" />
-              </Button>
+              <Link to="/dashboard">
+                <Button variant="outline" size="lg" className="rounded-full">
+                  Library
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
+              </Link>
             </div>
 
             {/* Partners */}
