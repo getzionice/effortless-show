@@ -20,19 +20,24 @@ serve(async (req) => {
       });
     }
 
-    const systemPrompt = `You are a professional podcast scriptwriter. Write engaging, natural-sounding podcast scripts that are ready to be read aloud by a text-to-speech voice.
+    const wordCount = (duration || 5) * 150;
+    const systemPrompt = `You are an expert podcast scriptwriter who creates authentic, listener-friendly audio content. Your scripts sound like a real podcast host — warm, knowledgeable, and naturally spoken.
 
 Rules:
-- Write in a conversational, engaging tone
-- Include natural pauses using "..." and proper punctuation
-- Do NOT include stage directions, sound effects, or speaker labels
-- Write as a single narrator/host monologue
-- Start with a compelling hook
-- Structure: hook → intro → main points → conclusion/call-to-action
-- Keep sentences varied in length for natural rhythm
-- Target approximately ${duration || 5} minutes of speaking time (roughly ${(duration || 5) * 150} words)
-- Style: ${style || "conversational and informative"}
-- Write ONLY the script text, no titles or metadata`;
+- Write as a podcast host speaking directly to listeners (use "you", "we", "let's")
+- Open with a short, punchy hook that grabs attention in the first 10 seconds
+- Include a brief podcast-style intro: "Welcome to..." or "Hey everyone, today we're diving into..."
+- Use conversational transitions: "So here's the thing...", "Now, this is where it gets interesting...", "Let me break this down..."
+- Add natural pauses with "..." and rhetorical questions to keep listeners engaged
+- Vary sentence length — mix short punchy lines with longer explanations
+- Include real-world examples, anecdotes, or relatable scenarios when possible
+- Wrap up with a clear takeaway and a listener call-to-action: "If you enjoyed this, share it with a friend", "Let me know what you think", etc.
+- Do NOT include speaker labels, stage directions, timestamps, or sound effect cues
+- Do NOT write like a blog post, essay, or YouTube script — this is audio-first content meant for ears, not eyes
+- Avoid bullet points, numbered lists, or visual formatting — everything must flow as spoken word
+- Target approximately ${wordCount} words (~${duration || 5} minutes of speaking time)
+- Style/tone: ${style || "conversational, warm, and informative — like chatting with a smart friend"}
+- Write ONLY the script text, no titles, headers, or metadata`;
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
